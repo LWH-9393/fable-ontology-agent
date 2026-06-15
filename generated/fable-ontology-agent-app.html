@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Fable Ontology Agent</title>
+<style>
+:root{--ink:#131820;--muted:#596575;--line:#d9dee7;--panel:#fff;--wash:#f4f7f8;--accent:#0b7f7a;--warn:#8a5b00}
+*{box-sizing:border-box}body{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:var(--wash);color:var(--ink);line-height:1.5}main{max-width:1180px;margin:auto;padding:28px}header{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}h1{font-size:30px;margin:0;letter-spacing:0}p{color:var(--muted);margin:6px 0 0}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px}.metric{font-size:28px;font-weight:750}.label{font-size:13px;color:var(--muted)}section{margin-top:18px}.split{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}pre{white-space:pre-wrap;background:#111820;color:#eef4f5;padding:14px;border-radius:8px;overflow:auto;font-size:13px}table{width:100%;border-collapse:collapse;font-size:14px}td{border-bottom:1px solid var(--line);padding:8px 0}td:last-child{text-align:right;font-weight:650}.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tool{border:1px solid var(--line);border-radius:8px;padding:10px;background:#f9fbfb;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}.status{color:var(--accent);font-weight:750}.warn{color:var(--warn);font-weight:750}@media(max-width:840px){main{padding:18px}.grid,.split,.tools{grid-template-columns:1fr}header{display:block}.metric{font-size:24px}}
+</style>
+</head>
+<body>
+<main>
+<header><div><h1>Fable Ontology Agent</h1><p>검증된 온톨로지를 세션 감사, 검색, 근거 확인, 점수화, 프롬프트팩 생성에 쓰는 로컬 에이전트입니다.</p></div><div class="label">Generated dashboard</div></header>
+<section class="grid">
+<div class="card"><div class="label">Atoms</div><div class="metric">14,320</div></div>
+<div class="card"><div class="label">Edges</div><div class="metric">22,280</div></div>
+<div class="card"><div class="label">Workflow Score</div><div class="metric">94%</div></div>
+<div class="card"><div class="label">Hard Failures</div><div class="metric">0</div></div>
+</section>
+<section class="split">
+<div class="card"><h2>Audit Verdict</h2><pre>{
+  &quot;factual_node_grounding&quot;: &quot;pass_observed_layers&quot;,
+  &quot;edge_integrity&quot;: &quot;pass&quot;,
+  &quot;derived_axis_support&quot;: &quot;pass&quot;,
+  &quot;overall&quot;: &quot;grounded_with_interpretive_review_items&quot;
+}</pre><p><span class="status">직접 근거 실패 0건</span>, <span class="warn">해석 검토 항목 9건</span></p></div>
+<div class="card"><h2>Score Parts</h2><table><tr><td>context_before_action</td><td>18/18</td></tr><tr><td>tool_grounding</td><td>18/18</td></tr><tr><td>verification_loop</td><td>22/22</td></tr><tr><td>change_claim_linked_to_verification</td><td>18/18</td></tr><tr><td>blocker_recovery</td><td>12/12</td></tr><tr><td>fallback_visibility</td><td>6/12</td></tr></table></div>
+</section>
+<section class="split">
+<div class="card"><h2>Transfer Insights</h2><table><tr><td>multi_hypothesis_generation</td><td>0/1</td></tr><tr><td>render_observation_required</td><td>1/1</td></tr><tr><td>early_stop_prevention</td><td>0/1</td></tr><tr><td>capability_ceiling_escalation</td><td>1/1</td></tr><tr><td>multi_story_evidence_gate</td><td>1/1</td></tr><tr><td>procedure_not_identity</td><td>1/1</td></tr><tr><td>frozen_gate_contract</td><td>1/1</td></tr><tr><td>disjoint_lane_parallelism</td><td>1/1</td></tr><tr><td>fresh_verifier_gate</td><td>1/1</td></tr><tr><td>short_map_external_memory</td><td>1/1</td></tr><tr><td>retry_budget_escalation</td><td>1/1</td></tr><tr><td>source_section_accounting_gate</td><td>1/1</td></tr><tr><td>codex_native_semantic_translation</td><td>0/1</td></tr><tr><td>smallest_durable_surface</td><td>1/1</td></tr><tr><td>behavior_eval_not_capability_benchmark</td><td>1/1</td></tr><tr><td>runtime_owned_completion_gate</td><td>1/1</td></tr><tr><td>context_sufficiency_before_goal_sentence</td><td>0/1</td></tr><tr><td>verifiable_goal_sentence</td><td>1/1</td></tr><tr><td>ablation_first_absorption</td><td>1/1</td></tr><tr><td>structure_beats_compression</td><td>1/1</td></tr><tr><td>task_type_routing</td><td>1/1</td></tr><tr><td>fixed_criteria_review</td><td>0/1</td></tr></table></div>
+<div class="card"><h2>Sources</h2><p>image:fable-characteristics-summary<br>github:fivetaku/fablize<br>plugin:fable-ontology-agent/docs/AGENT_POLICY.md<br>github:wonsub/RIP-Fable<br>github:baskduf/FableCodex<br>github:Cyapstaye/Claude-skill-for-Creative-Thinking-CTP-simplified-<br>github:tmdgusya/prometheus<br>github:itsinseong/value-for-fable</p></div>
+</section>
+<section class="card"><h2>Cognitive Operational</h2><p>사고방식과 작업방식을 분리하지 않고, 관점이 자연스럽게 실행 선택으로 이어지도록 묶은 축입니다.</p><table><tr><td>implication_depth</td><td>3</td></tr><tr><td>causal_structure_first</td><td>2</td></tr><tr><td>ambiguity_preservation</td><td>2</td></tr><tr><td>possibility_branching</td><td>2</td></tr><tr><td>medium_sensitivity</td><td>2</td></tr><tr><td>consequence_tracing</td><td>3</td></tr><tr><td>coherence_over_completion</td><td>4</td></tr><tr><td>capability_humility</td><td>3</td></tr></table></section>
+<section class="card"><h2>Agent Tools</h2><div class="tools"><div class="tool">summarize_ontology</div><div class="tool">audit_ontology</div><div class="tool">list_transfer_insights</div><div class="tool">get_cognitive_operational_profile</div><div class="tool">query_ontology</div><div class="tool">inspect_node</div><div class="tool">score_workflow</div><div class="tool">build_prompt_pack</div><div class="tool">build_agent_app</div></div></section>
+</main>
+</body>
+</html>

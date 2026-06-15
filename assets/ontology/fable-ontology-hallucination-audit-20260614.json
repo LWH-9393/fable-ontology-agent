@@ -1,0 +1,308 @@
+{
+  "generated_at": "2026-06-14T05:04:15.564Z",
+  "verdict": {
+    "factual_node_grounding": "pass_observed_layers",
+    "edge_integrity": "pass",
+    "derived_axis_support": "pass",
+    "overall": "grounded_with_interpretive_review_items"
+  },
+  "counts": {
+    "atoms": 14320,
+    "edges": 22280,
+    "duplicate_atom_ids": 0,
+    "duplicate_edge_ids": 0,
+    "edge_endpoint_problems": 0
+  },
+  "source_summary": {
+    "direct_sourced_atoms": 14264,
+    "source_file_missing": 0,
+    "bad_source_line": 0,
+    "text_grounded_near_line": 14194,
+    "text_grounded_full_file": 1,
+    "no_text_match": 9,
+    "by_status": {
+      "near_exact": 9800,
+      "near_phrase": 1502,
+      "near_generated_file_tool": 1635,
+      "near_markdown_table_rule": 38,
+      "near_generated_short_tool": 1121,
+      "near_prefix": 28,
+      "near_loose": 49,
+      "near_generated_fallback": 20,
+      "near_generated_empty_tool": 1,
+      "no_text_match": 9,
+      "file_prefix": 1,
+      "file_phrase": 60
+    },
+    "by_layer": {
+      "local_behavior_atom": 13603,
+      "thought_system_atom": 648,
+      "additional_local_atom": 62,
+      "derived_pattern_cluster": 7
+    },
+    "by_source_kind": {
+      "local_behavior_atom": 13603,
+      "derived_axis": 49,
+      "repo_file": 559,
+      "comparison_extension": 7,
+      "routing_extension": 8,
+      "official_prompting_extension": 13,
+      "official_system_card_failure": 6,
+      "community_unique_extension": 6,
+      "local_history": 2,
+      "local_task": 60,
+      "derived_pattern_cluster": 7
+    },
+    "no_text_by_layer": {
+      "thought_system_atom": 9
+    },
+    "no_text_by_source_kind": {
+      "comparison_extension": 6,
+      "official_prompting_extension": 1,
+      "community_unique_extension": 2
+    }
+  },
+  "grounding_review": {
+    "hard_grounding_failures": 0,
+    "interpretive_review_items": 9,
+    "interpretive_review_samples": [
+      {
+        "id": "thought:ta_b64550716a706b74",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Locate the causal difference in the internal mechanism, not only in the visible output.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_fc4b0e3ec54fdfdb",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Separate simulation engine, color model, rendering composition, and expressive overlay as distinct explanatory layers.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_6c01780ab18f80e4",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Connect code-level choices to perceptual outcomes such as smoothness, detail retention, and material feel.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_ecb3500e439da6ef",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Treat the represented material as a model choice: RGB accumulation and absorption-based pigment mixing imply different worlds.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_bd8f41c709126f1d",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Record what a technical substrate enables or blocks: parallel GPU passes enable higher dye resolution and realtime detail.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_85fe65974c5a8131",
+        "layer": "thought_system_atom",
+        "kind": "comparison_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+        "source_line": 1,
+        "text": "Preserve vivid explanatory contrast while marking strong phrases as approximations when they overstate physical or technical identity.",
+        "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+      },
+      {
+        "id": "thought:ta_548620ea6777852e",
+        "layer": "thought_system_atom",
+        "kind": "official_prompting_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/prompting-claude-fable-5.txt",
+        "source_line": 288,
+        "text": "After long autonomous work, write the final summary as a fresh re-grounding for a reader who did not watch the work.",
+        "line_excerpt": "If you've been working for a while without the user watching (overnight, across many"
+      },
+      {
+        "id": "thought:ta_6b5d166944ba5ab6",
+        "layer": "thought_system_atom",
+        "kind": "community_unique_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/github/builderio-efficient-fable-SKILL.md",
+        "source_line": 14,
+        "text": "Reserve the expensive model for decomposition, tradeoffs, synthesis, risk assessment, and final review.",
+        "line_excerpt": "Reserve Fable for:"
+      },
+      {
+        "id": "thought:ta_807e4287d842e33b",
+        "layer": "thought_system_atom",
+        "kind": "community_unique_extension",
+        "status": "no_text_match",
+        "method": "none",
+        "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/github/danmcinerney-architect-loop-README.md",
+        "source_line": 3,
+        "text": "Separate architect judgment from builder implementation: the architect plans and reviews, while builders work in fresh isolated contexts.",
+        "line_excerpt": "**Claude Fable handles planning and review; GPT-5.5 Codex handles"
+      }
+    ]
+  },
+  "derived_axis_summary": {
+    "axes": 49,
+    "unsupported_axes": 0,
+    "unsupported_axis_samples": [],
+    "min_support_edges": 1,
+    "max_support_edges": 40
+  },
+  "pattern_summary": {
+    "pattern_atoms": 7,
+    "count_mismatches": [],
+    "missing_axis_targets": [],
+    "support_edges": 56,
+    "pattern_axis_edges": 12
+  },
+  "fallback_summary": {
+    "fallback_atoms": 20,
+    "marker_verified": 20,
+    "marker_missing": 0
+  },
+  "risk_items": [
+    {
+      "severity": "medium",
+      "title": "thought extension 중 직접 인용이 아니라 원문 기반 해석으로 만든 atom이 있다",
+      "count": 9
+    },
+    {
+      "severity": "medium",
+      "title": "thought_system_atom의 일부는 원문 문장 그 자체가 아니라 evidence_excerpt에서 해석한 규칙 문장이다",
+      "count": 40
+    },
+    {
+      "severity": "low",
+      "title": "local atom type 분류는 정규식 기반 휴리스틱이다",
+      "count": 13603
+    }
+  ],
+  "review_samples": [
+    {
+      "id": "thought:ta_b64550716a706b74",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Locate the causal difference in the internal mechanism, not only in the visible output.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_fc4b0e3ec54fdfdb",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Separate simulation engine, color model, rendering composition, and expressive overlay as distinct explanatory layers.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_6c01780ab18f80e4",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Connect code-level choices to perceptual outcomes such as smoothness, detail retention, and material feel.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_ecb3500e439da6ef",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Treat the represented material as a model choice: RGB accumulation and absorption-based pigment mixing imply different worlds.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_bd8f41c709126f1d",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Record what a technical substrate enables or blocks: parallel GPU passes enable higher dye resolution and realtime detail.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_85fe65974c5a8131",
+      "layer": "thought_system_atom",
+      "kind": "comparison_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/.codex/attachments/58029dd3-9063-42c4-ac43-3753d57480f6/pasted-text.txt",
+      "source_line": 1,
+      "text": "Preserve vivid explanatory contrast while marking strong phrases as approximations when they overstate physical or technical identity.",
+      "line_excerpt": "# 墨流し · Suminagashi — 두 구현의 핵심 차이 > 처음 만든 버전(`ink-sim.js`, **CPU 격자 유체**)과 > 당신이 준 버전(`suminagashi.js`, **WebGL2 GPU 유체**)을 코드로 비교한 문서. 표현하려는 목표 — *일본풍 수면에 먹을 흘리고, 유체적으로 움직이며, 여러 색..."
+    },
+    {
+      "id": "thought:ta_548620ea6777852e",
+      "layer": "thought_system_atom",
+      "kind": "official_prompting_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/prompting-claude-fable-5.txt",
+      "source_line": 288,
+      "text": "After long autonomous work, write the final summary as a fresh re-grounding for a reader who did not watch the work.",
+      "line_excerpt": "If you've been working for a while without the user watching (overnight, across many"
+    },
+    {
+      "id": "thought:ta_6b5d166944ba5ab6",
+      "layer": "thought_system_atom",
+      "kind": "community_unique_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/github/builderio-efficient-fable-SKILL.md",
+      "source_line": 14,
+      "text": "Reserve the expensive model for decomposition, tradeoffs, synthesis, risk assessment, and final review.",
+      "line_excerpt": "Reserve Fable for:"
+    },
+    {
+      "id": "thought:ta_807e4287d842e33b",
+      "layer": "thought_system_atom",
+      "kind": "community_unique_extension",
+      "status": "no_text_match",
+      "method": "none",
+      "source_file": "<LOCAL_HOME>/Documents/Codex/2026-06-14/new-chat/work/research_sources/github/danmcinerney-architect-loop-README.md",
+      "source_line": 3,
+      "text": "Separate architect judgment from builder implementation: the architect plans and reviews, while builders work in fresh isolated contexts.",
+      "line_excerpt": "**Claude Fable handles planning and review; GPT-5.5 Codex handles"
+    }
+  ],
+  "fallback_review_samples": []
+}

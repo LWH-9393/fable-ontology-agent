@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fable-ontology-agent": {
+      "cwd": ".",
+      "command": "node",
+      "args": [
+        "./scripts/mcp-server.mjs"
+      ]
+    }
+  }
+}

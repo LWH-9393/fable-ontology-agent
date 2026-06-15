@@ -1,0 +1,45 @@
+{
+  "name": "fable-ontology-agent",
+  "version": "1.0.0",
+  "description": "Agent plugin for auditing, querying, scoring, and operationalizing the verified Fable ontology.",
+  "author": {
+    "name": "Local Workspace",
+    "email": "[REDACTED_EMAIL]",
+    "url": "https://local.invalid/fable-ontology-agent"
+  },
+  "homepage": "https://local.invalid/fable-ontology-agent",
+  "repository": "https://local.invalid/fable-ontology-agent",
+  "license": "UNLICENSED",
+  "keywords": [
+    "fable",
+    "ontology",
+    "agent",
+    "audit",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "apps": "./.app.json",
+  "interface": {
+    "displayName": "Fable Ontology Agent",
+    "shortDescription": "Audit and apply the verified Fable ontology.",
+    "longDescription": "A local agent plugin that turns the verified Fable ontology into usable tools for grounding audits, atom search, node inspection, workflow scoring, and prompt-pack generation. It does not make a Fable identity claim; it works only from bundled ontology evidence and explicitly marked interpretive items.",
+    "developerName": "Local Workspace",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP Tools",
+      "Audit",
+      "Search",
+      "Prompt Pack"
+    ],
+    "websiteURL": "https://local.invalid/fable-ontology-agent",
+    "privacyPolicyURL": "https://local.invalid/fable-ontology-agent/privacy",
+    "termsOfServiceURL": "https://local.invalid/fable-ontology-agent/terms",
+    "defaultPrompt": [
+      "Audit this session against the Fable ontology.",
+      "Find ontology nodes about validation loops.",
+      "Build a strict prompt pack from the ontology."
+    ],
+    "brandColor": "#0B7F7A"
+  }
+}

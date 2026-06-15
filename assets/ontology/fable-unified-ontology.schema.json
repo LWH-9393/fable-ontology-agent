@@ -1,0 +1,17 @@
+{
+  "name": "Fable Unified Ontology",
+  "version": "fable-unified-ontology-v1",
+  "generated_at": "2026-06-14T03:26:55.226Z",
+  "layers": [
+    "local_behavior_atom",
+    "thought_system_atom",
+    "additional_local_atom",
+    "derived_pattern_cluster"
+  ],
+  "edge_layers": [
+    "local_behavior_edge",
+    "thought_system_edge",
+    "additional_local_edge",
+    "derived_pattern_edge"
+  ]
+}

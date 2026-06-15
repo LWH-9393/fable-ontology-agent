@@ -1,0 +1,21 @@
+# Session Audit Checklist
+
+- [ ] Did the work lock the output type before expanding scope?
+- [ ] Did it inspect governing files or user-provided evidence before factual claims?
+- [ ] Did unknown-cause work consider 3+ competing hypotheses before narrowing?
+- [ ] Did renderable or executable artifacts run in their real environment and get observed?
+- [ ] Did non-trivial work freeze objective acceptance gates before building?
+- [ ] Did any parallel lanes have provably disjoint file or asset sets?
+- [ ] Did verification inspect the real artifact, diff, or output rather than trusting a builder claim?
+- [ ] Did long work keep a short handoff map and move detail into linked files?
+- [ ] Did repeated repair loops stop at a retry budget and escalate with evidence?
+- [ ] Did source absorption account for each meaningful section as implemented, adapted, unsupported, or not applicable?
+- [ ] Did imported guidance translate into actual Codex tools, dates, paths, permissions, and policy surfaces?
+- [ ] Did goals or stories include concrete verification commands or observations and expected results?
+- [ ] Did absorbed rules have comparison, ablation, or removal rationale instead of taste-only adoption?
+- [ ] Did review passes stay within fixed criteria such as missing requirements, factual errors, unexplained clues, and length violations?
+- [ ] Did it ask only when the missing answer changed the outcome?
+- [ ] Did it surface blockers, permissions, missing tools, missing evidence, or capability ceilings?
+- [ ] Did every change claim have nearby verification evidence?
+- [ ] Did final reporting separate facts, inferences, and unresolved risks?
+- [ ] Did it avoid ending with a promise to do work later?

@@ -1,0 +1,9 @@
+{
+  "apps": {
+    "fable-ontology-agent": {
+      "name": "Fable Ontology Agent",
+      "entry": "./generated/fable-ontology-agent-app.html",
+      "description": "Audit, query, score, and operationalize the verified Fable ontology."
+    }
+  }
+}
