@@ -8,6 +8,8 @@ Returns counts for atoms, edges, pattern clusters, fallback events, audit verdic
 
 Returns the grounding audit. Use this before broad ontology claims.
 
+The result includes `data_integrity`, a live structural check computed from the bundled atoms and edges at call time (duplicate atom ids, duplicate edge ids, dangling edge references). It verifies the static audit's `edge_integrity` claim instead of trusting it.
+
 ## list_transfer_insights
 
 Arguments:
@@ -31,13 +33,15 @@ Returns the unified cognitive-operational profile. Use this for "think like Fabl
 
 Arguments:
 
-- `query`: text search across id, text, axis, layer, type, model, and session id.
+- `query`: text search across id, text, axis, layer, type, model, and session id. Space-separated terms are ANDed; each term must appear somewhere in the atom.
 - `layer`: exact `source_layer` filter.
 - `type`: exact atom type filter.
 - `source_kind`: exact source kind filter.
 - `model`: exact model filter.
 - `limit`: 1 to 500.
 - `include_edges`: include incoming/outgoing edge counts.
+
+The result reports `count` (returned atoms), `total_matches` (all matches before the limit), and `truncated`, so a caller can tell when a broad query needs refinement.
 
 ## inspect_node
 
@@ -46,6 +50,8 @@ Arguments:
 - `id`: required atom id.
 - `include_neighbors`: include nearby edges.
 - `neighbor_limit`: maximum neighbors to return.
+
+When neighbors are included, `outgoing_total` and `incoming_total` report the full edge counts even when the listed neighbors are truncated by `neighbor_limit`.
 
 Use this before citing a node as evidence.
 
@@ -68,6 +74,8 @@ Arguments:
 - `target_dir`: optional output directory.
 
 Strict mode is the default.
+
+The build only writes and removes known pack filenames inside `target_dir`; it never deletes other files or the directory itself, so an existing directory can be passed safely.
 
 ## build_agent_app
 

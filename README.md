@@ -6,15 +6,15 @@ It intentionally does not include Obsidian vault export or full graph HTML gener
 
 ## Public Dataset Note
 
-This public package preserves the ontology structure, counts, transfer insights, and agent behavior, but local absolute paths, email-like identifiers, and credential-handling command metadata in the bundled ontology assets are redacted for safe publication.
+This public package preserves the ontology structure, counts, transfer insights, and agent behavior, but local absolute paths, email-like identifiers, and sensitive secret-handling command metadata in the bundled ontology assets are redacted for safe publication.
 
 ## Capabilities
 
 - `summarize_ontology`: high-level atom, edge, layer, pattern, fallback, and audit counts.
-- `audit_ontology`: grounding audit with hard failures and interpretive review items separated.
+- `audit_ontology`: grounding audit with hard failures and interpretive review items separated, plus a live `data_integrity` check computed from the bundled atoms and edges.
 - `list_transfer_insights`: image, fablize, RIP-Fable, FableCodex, CTP, Prometheus, and value-for-fable procedure-transfer insights integrated as an extension layer.
 - `get_cognitive_operational_profile`: unified thinking-style and working-style profile for "think like Fable" requests.
-- `query_ontology`: searchable access to ontology atoms.
+- `query_ontology`: searchable access to ontology atoms; space-separated terms are ANDed, and results report `total_matches` and `truncated`.
 - `inspect_node`: one-node evidence view with incoming and outgoing neighbors.
 - `score_workflow`: local behavior scoring against context, tool grounding, verification, recovery, and fallback visibility.
 - `build_prompt_pack`: reusable strict or full prompt-pack files.
@@ -49,6 +49,12 @@ node scripts/cli.mjs inspect <atom-id>
 node scripts/cli.mjs score
 node scripts/cli.mjs prompt-pack strict
 node scripts/cli.mjs app
+```
+
+## Tests
+
+```bash
+npm test
 ```
 
 ## MCP Usage
