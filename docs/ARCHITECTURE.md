@@ -39,6 +39,7 @@ The core loader builds:
 - `edges`: ontology relationships;
 - `byId`: atom lookup map;
 - `incoming` and `outgoing`: edge indexes;
-- `patterns`, `comparison`, and `audit`: supporting reports.
+- `patterns`, `comparison`, and `audit`: supporting reports;
+- lazy caches built on first use: normalized search haystacks and the live data-integrity result.
 
-Tools should always distinguish direct evidence from interpretation. `inspect_node` is the narrow evidence gate.
+Tools should always distinguish direct evidence from interpretation. `inspect_node` is the narrow evidence gate, and `audit_ontology` re-verifies structural integrity live instead of only relaying the static audit report.

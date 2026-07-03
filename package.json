@@ -1,0 +1,14 @@
+{
+  "name": "fable-ontology-agent",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent plugin for auditing, querying, scoring, and operationalizing the verified Fable ontology.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node tests/transfer-insights.test.mjs && node tests/cognitive-operational-profile.test.mjs && node tests/agent-hardening.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
