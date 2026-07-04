@@ -103,7 +103,7 @@ const TOOL_DEFS = [
   {
     name: 'score_workflow',
     title: 'Score Workflow',
-    description: 'Score local session behavior against the ontology workflow pattern: context, tool grounding, verification, recovery, and fallback visibility.',
+    description: 'Score local session behavior against the ontology workflow pattern: context, tool grounding, verification, recovery, and fallback visibility. Transfer alignment is reported as evidence-tier signals (structural, keyword, not_measurable), not compliance verdicts.',
     inputSchema: {
       type: 'object',
       properties: {

@@ -55,7 +55,16 @@ assert.ok(score.transfer_alignment.some(item => item.name === 'source_section_ac
 assert.ok(score.transfer_alignment.some(item => item.name === 'runtime_owned_completion_gate'));
 assert.ok(score.transfer_alignment.some(item => item.name === 'ablation_first_absorption'));
 assert.ok(score.transfer_alignment.some(item => item.name === 'fixed_criteria_review'));
-assert.ok(score.recommendation.some(item => item.includes('competing hypotheses')));
+assert.ok(score.transfer_alignment.every(item => ['structural', 'keyword', 'none'].includes(item.evidence)));
+assert.ok(score.transfer_alignment.every(item => ['structural_evidence', 'no_structural_evidence', 'keyword_signal_only', 'no_keyword_signal', 'not_measurable'].includes(item.status)));
+assert.equal(score.transfer_alignment.find(item => item.name === 'procedure_not_identity').status, 'not_measurable');
+const alignmentSummary = score.transfer_alignment_summary;
+assert.equal(
+  alignmentSummary.structural_evidence + alignmentSummary.no_structural_evidence + alignmentSummary.keyword_signal_only
+    + alignmentSummary.no_keyword_signal + alignmentSummary.not_measurable,
+  score.transfer_alignment.length,
+);
+assert.ok(score.recommendation.some(item => item.includes('unmeasured')));
 
 const strictPack = buildPromptPack({ mode: 'strict' });
 assert.equal(strictPack.files.includes('TRANSFER-INSIGHTS.md'), true);

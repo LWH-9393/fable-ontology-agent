@@ -708,6 +708,7 @@ export function scoreWorkflow(args = {}) {
       maps_to: cluster.maps_to,
     })),
     transfer_alignment: transferAlignment,
+    transfer_alignment_summary: summarizeTransferAlignment(transferAlignment),
     recommendation: [
       ...recommendFromScore(score, maxScore, { hasContext, hasVerification, hasChange, hasBlocker, fallback }),
       ...recommendFromTransferAlignment(transferAlignment),
@@ -912,10 +913,14 @@ function countTransition(rows, fromFn, toFn, windowSize) {
 }
 
 function assessTransferAlignment(rows, flags) {
-  const hasHypothesis = rows.some(atom => /hypothes|가설|competing|alternative explanation|대안|경쟁/i.test(atom.text || ''));
+  // Structural signals: judged from session events (atom types, tool actions, transitions).
   const hasRenderObservation = rows.some(atom => isRenderObservationTool(atom));
-  const hasTaskBreakdown = rows.some(atom => /TaskCreate|TaskUpdate|goal|story|checkpoint|분해|단계|handoff/i.test(atom.text || '')) || flags.changeToVerify > 0;
-  const hasCeilingEscalation = flags.hasBlocker || flags.fallback > 0 || rows.some(atom => /escalat|ceiling|한계|불가능|stronger model|human/i.test(atom.text || ''));
+  const hasTaskBreakdown = flags.changeToVerify > 0 || rows.some(atom => atom.type === 'tool_action' && /TaskCreate|TaskUpdate/i.test(atom.text || ''));
+  const hasCeilingEscalation = flags.hasBlocker || flags.fallback > 0;
+  const hasEarlyStopRisk = rows.some(atom => atom.type === 'assistant_claim' && /\b(I'?ll|I will|let me|now I'?ll)\b|하겠습니다\.?$|진행하겠습니다\.?$/i.test(atom.text || ''));
+
+  // Keyword signals: weak text proxies; a match is a signal, not evidence of compliance.
+  const hasHypothesis = rows.some(atom => /hypothes|가설|competing|alternative explanation|대안|경쟁/i.test(atom.text || ''));
   const hasFrozenGate = rows.some(atom => /frozen gate|acceptance gate|pass condition|합격 기준|gate.*written|gate.*before|동결/i.test(atom.text || ''));
   const hasDisjointLanes = rows.some(atom => /disjoint|lane|file set|asset set|parallel|겹치지|레인|병렬/i.test(atom.text || ''));
   const hasFreshVerifier = rows.some(atom => /verifier|fresh context|actual artifact|real artifact|builder claim|검증자|diff.*(PASS|FAIL)|(PASS|FAIL).*diff|output.*(PASS|FAIL)|(PASS|FAIL).*output/i.test(atom.text || ''));
@@ -932,45 +937,60 @@ function assessTransferAlignment(rows, flags) {
   const hasStructureCompression = rows.some(atom => /readable|compression|압축|fragments|arrow chain|산문|가독성/i.test(atom.text || ''));
   const hasTaskRouting = rows.some(atom => /task type|routing|stronger model|opus|sonnet|capability ceiling|작업.*라우팅|강한 모델/i.test(atom.text || ''));
   const hasFixedCriteriaReview = rows.some(atom => /missing requirements|factual.*numeric|unexplained clue|length overrun|fixed criteria|2-pass|리뷰.*기준|분량 초과/i.test(atom.text || ''));
-  const hasEarlyStopRisk = rows.some(atom => atom.type === 'assistant_claim' && /\b(I'?ll|I will|let me|now I'?ll)\b|하겠습니다\.?$|진행하겠습니다\.?$/i.test(atom.text || ''));
-  const procedureNotIdentity = true;
 
   return [
-    transferPart('multi_hypothesis_generation', hasHypothesis, 'Evidence of 3+ competing hypotheses or alternatives in the scoped session.'),
-    transferPart('render_observation_required', hasRenderObservation, 'Evidence of real renderer/runtime observation such as screenshot, browser preview, Playwright, canvas, SVG, chart, or game run.'),
-    transferPart('early_stop_prevention', !hasEarlyStopRisk, 'No obvious future-promise stopping pattern detected in assistant claims.'),
-    transferPart('capability_ceiling_escalation', hasCeilingEscalation, 'Blocker, fallback, limitation, or escalation signal is explicitly visible.'),
-    transferPart('multi_story_evidence_gate', hasTaskBreakdown, 'Task decomposition or change-to-verification evidence is visible.'),
-    transferPart('procedure_not_identity', procedureNotIdentity, 'Plugin policy treats transfer as procedure rather than hidden model identity.'),
-    transferPart('frozen_gate_contract', hasFrozenGate, 'Evidence that objective acceptance gates were set before implementation and not relaxed mid-run.'),
-    transferPart('disjoint_lane_parallelism', hasDisjointLanes, 'Evidence that parallel lanes use disjoint file or asset sets, or that non-disjoint work stays serialized.'),
-    transferPart('fresh_verifier_gate', hasFreshVerifier, 'Evidence that actual artifacts, diffs, or outputs were checked independently of builder claims.'),
-    transferPart('short_map_external_memory', hasShortMapMemory, 'Evidence that long work uses a short handoff map with linked detail files instead of a giant context log.'),
-    transferPart('retry_budget_escalation', hasRetryBudget, 'Evidence that repeated repair loops have a retry budget and escalation package.'),
-    transferPart('source_section_accounting_gate', hasSourceAccounting, 'Evidence that imported source sections were accounted for as implemented, adapted, unsupported, or not applicable.'),
-    transferPart('codex_native_semantic_translation', hasCodexNativeTranslation, 'Evidence that imported instructions were translated into actual Codex tools, policies, and surfaces.'),
-    transferPart('smallest_durable_surface', hasSmallestDurableSurface, 'Evidence that persistent rules were placed on the smallest durable surface that can carry them.'),
-    transferPart('behavior_eval_not_capability_benchmark', hasBehaviorEval, 'Evidence that behavior checks are separated from model capability or identity claims.'),
-    transferPart('runtime_owned_completion_gate', hasRuntimeOwnedGate, 'Evidence that completion is judged by a runtime, /goal, or external verifier rather than agent spontaneity.'),
-    transferPart('context_sufficiency_before_goal_sentence', hasContextGoal, 'Evidence that context was gathered before a goal, story, or success condition was proposed.'),
-    transferPart('verifiable_goal_sentence', hasVerifiableGoal, 'Evidence that goals include objective verification commands, observations, or expected results.'),
-    transferPart('ablation_first_absorption', hasAblation, 'Evidence that absorbed rules were compared, ablated, benchmarked, or given removal criteria.'),
-    transferPart('structure_beats_compression', hasStructureCompression, 'Evidence that necessary structure and readability were preserved instead of over-compressing the answer.'),
-    transferPart('task_type_routing', hasTaskRouting, 'Evidence that procedure, stronger reasoning, or review was selected by task type and capability ceiling.'),
-    transferPart('fixed_criteria_review', hasFixedCriteriaReview, 'Evidence that review passes used fixed criteria instead of expanding scope opportunistically.'),
+    transferPart('multi_hypothesis_generation', 'keyword', hasHypothesis, 'Evidence of 3+ competing hypotheses or alternatives in the scoped session.'),
+    transferPart('render_observation_required', 'structural', hasRenderObservation, 'Evidence of real renderer/runtime observation such as screenshot, browser preview, Playwright, canvas, SVG, chart, or game run.'),
+    transferPart('early_stop_prevention', 'structural', !hasEarlyStopRisk, 'No obvious future-promise stopping pattern detected in assistant claims.'),
+    transferPart('capability_ceiling_escalation', 'structural', hasCeilingEscalation, 'Blocker, model-access-error, or fallback events are present in session atoms.'),
+    transferPart('multi_story_evidence_gate', 'structural', hasTaskBreakdown, 'Change-to-verification transitions or task-tool actions are present in session atoms.'),
+    transferPart('procedure_not_identity', 'none', false, 'Plugin policy stance; compliance is not measurable from session atoms.'),
+    transferPart('frozen_gate_contract', 'keyword', hasFrozenGate, 'Evidence that objective acceptance gates were set before implementation and not relaxed mid-run.'),
+    transferPart('disjoint_lane_parallelism', 'keyword', hasDisjointLanes, 'Evidence that parallel lanes use disjoint file or asset sets, or that non-disjoint work stays serialized.'),
+    transferPart('fresh_verifier_gate', 'keyword', hasFreshVerifier, 'Evidence that actual artifacts, diffs, or outputs were checked independently of builder claims.'),
+    transferPart('short_map_external_memory', 'keyword', hasShortMapMemory, 'Evidence that long work uses a short handoff map with linked detail files instead of a giant context log.'),
+    transferPart('retry_budget_escalation', 'keyword', hasRetryBudget, 'Evidence that repeated repair loops have a retry budget and escalation package.'),
+    transferPart('source_section_accounting_gate', 'keyword', hasSourceAccounting, 'Evidence that imported source sections were accounted for as implemented, adapted, unsupported, or not applicable.'),
+    transferPart('codex_native_semantic_translation', 'keyword', hasCodexNativeTranslation, 'Evidence that imported instructions were translated into actual Codex tools, policies, and surfaces.'),
+    transferPart('smallest_durable_surface', 'keyword', hasSmallestDurableSurface, 'Evidence that persistent rules were placed on the smallest durable surface that can carry them.'),
+    transferPart('behavior_eval_not_capability_benchmark', 'keyword', hasBehaviorEval, 'Evidence that behavior checks are separated from model capability or identity claims.'),
+    transferPart('runtime_owned_completion_gate', 'keyword', hasRuntimeOwnedGate, 'Evidence that completion is judged by a runtime, /goal, or external verifier rather than agent spontaneity.'),
+    transferPart('context_sufficiency_before_goal_sentence', 'keyword', hasContextGoal, 'Evidence that context was gathered before a goal, story, or success condition was proposed.'),
+    transferPart('verifiable_goal_sentence', 'keyword', hasVerifiableGoal, 'Evidence that goals include objective verification commands, observations, or expected results.'),
+    transferPart('ablation_first_absorption', 'keyword', hasAblation, 'Evidence that absorbed rules were compared, ablated, benchmarked, or given removal criteria.'),
+    transferPart('structure_beats_compression', 'keyword', hasStructureCompression, 'Evidence that necessary structure and readability were preserved instead of over-compressing the answer.'),
+    transferPart('task_type_routing', 'keyword', hasTaskRouting, 'Evidence that procedure, stronger reasoning, or review was selected by task type and capability ceiling.'),
+    transferPart('fixed_criteria_review', 'keyword', hasFixedCriteriaReview, 'Evidence that review passes used fixed criteria instead of expanding scope opportunistically.'),
   ];
 }
 
-function transferPart(name, met, note) {
+function transferPart(name, evidence, detected, note) {
   const insight = TRANSFER_INSIGHTS.find(item => item.id === name);
+  const status = evidence === 'none'
+    ? 'not_measurable'
+    : evidence === 'structural'
+      ? (detected ? 'structural_evidence' : 'no_structural_evidence')
+      : (detected ? 'keyword_signal_only' : 'no_keyword_signal');
   return {
     name,
-    got: met ? 1 : 0,
-    max: 1,
-    status: met ? 'met_or_supported' : 'missing_or_unobserved',
+    evidence,
+    status,
     maps_to: insight?.maps_to || [],
     note,
   };
+}
+
+function summarizeTransferAlignment(parts) {
+  const summary = {
+    method: 'Structural items are judged from session events (atom types, tool actions, transitions). Keyword items are weak text proxies: a match is a signal, not proof of compliance, and no match means unmeasured, not violated.',
+    structural_evidence: 0,
+    no_structural_evidence: 0,
+    keyword_signal_only: 0,
+    no_keyword_signal: 0,
+    not_measurable: 0,
+  };
+  for (const part of parts) summary[part.status]++;
+  return summary;
 }
 
 function isRenderObservationTool(atom) {
@@ -992,32 +1012,15 @@ function recommendFromScore(score, maxScore, flags) {
 
 function recommendFromTransferAlignment(parts) {
   const recs = [];
-  if (parts.some(part => part.name === 'multi_hypothesis_generation' && part.got === 0)) {
-    recs.push('Add 3+ competing hypotheses before narrowing an unknown-cause investigation.');
-  }
-  if (parts.some(part => part.name === 'render_observation_required' && part.got === 0)) {
+  if (parts.some(part => part.name === 'render_observation_required' && part.status === 'no_structural_evidence')) {
     recs.push('For renderable or executable artifacts, add a real runtime observation before final claims.');
   }
-  if (parts.some(part => part.name === 'early_stop_prevention' && part.got === 0)) {
+  if (parts.some(part => part.name === 'early_stop_prevention' && part.status === 'no_structural_evidence')) {
     recs.push('Avoid ending on future intent; do the promised work or ask the blocking question.');
   }
-  if (parts.some(part => part.name === 'frozen_gate_contract' && part.got === 0)) {
-    recs.push('For non-trivial work, freeze objective acceptance gates before building.');
-  }
-  if (parts.some(part => part.name === 'fresh_verifier_gate' && part.got === 0)) {
-    recs.push('For lane completion, verify the real artifact or diff rather than relying on builder self-claims.');
-  }
-  if (parts.some(part => part.name === 'source_section_accounting_gate' && part.got === 0)) {
-    recs.push('For source absorption, account for each meaningful source section as implemented, adapted, unsupported, or not applicable.');
-  }
-  if (parts.some(part => part.name === 'verifiable_goal_sentence' && part.got === 0)) {
-    recs.push('Write goals with concrete verification commands or observations and expected results.');
-  }
-  if (parts.some(part => part.name === 'ablation_first_absorption' && part.got === 0)) {
-    recs.push('Before making borrowed workflow rules core policy, add comparison, ablation, or removal criteria.');
-  }
-  if (parts.some(part => part.name === 'fixed_criteria_review' && part.got === 0)) {
-    recs.push('Constrain review passes to fixed criteria such as missing requirements, factual errors, unexplained clues, and length violations.');
+  const unmeasured = parts.filter(part => part.status === 'no_keyword_signal').length;
+  if (unmeasured) {
+    recs.push(`${unmeasured} transfer principles have keyword-level scans only and show no signal in this scope; treat them as unmeasured, not as violations.`);
   }
   return recs;
 }
@@ -1068,7 +1071,7 @@ function interpretiveReviewMarkdown(audit) {
 function agentAppHtml({ summary, audit, score }) {
   const tools = ['summarize_ontology', 'audit_ontology', 'list_transfer_insights', 'get_cognitive_operational_profile', 'query_ontology', 'inspect_node', 'score_workflow', 'build_prompt_pack', 'build_agent_app'];
   const scoreRows = score.score_parts.map(part => `<tr><td>${escapeHtml(part.name)}</td><td>${part.got}/${part.max}</td></tr>`).join('');
-  const transferRows = score.transfer_alignment.map(part => `<tr><td>${escapeHtml(part.name)}</td><td>${part.got}/${part.max}</td></tr>`).join('');
+  const transferRows = score.transfer_alignment.map(part => `<tr><td>${escapeHtml(part.name)}</td><td>${escapeHtml(part.status)}</td></tr>`).join('');
   const cognitiveRows = COGNITIVE_OPERATIONAL_AXES.map(axis => `<tr><td>${escapeHtml(axis.id)}</td><td>${escapeHtml(axis.related_transfer_insights.length)}</td></tr>`).join('');
   return `<!doctype html>
 <html lang="ko">

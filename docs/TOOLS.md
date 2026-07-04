@@ -64,7 +64,7 @@ Arguments:
 
 The score checks context gathering, tool grounding, verification, change-to-verification linkage, blocker recovery, and fallback visibility.
 
-It also returns `transfer_alignment`, which checks the observable subset of the 27 synthesis-layer rules: competing hypotheses, runtime observation, early-stop prevention, capability-ceiling escalation, multi-story evidence gate, procedure-not-identity, frozen acceptance gates, disjoint lane parallelism, fresh verifier gating, short-map memory, retry-budget escalation, source-section accounting, Codex-native translation, runtime-owned completion, verifiable goals, ablation-aware absorption, task-type routing, and fixed-criteria review.
+It also returns `transfer_alignment`, which reports evidence-tier signals for the synthesis-layer rules instead of compliance verdicts. Four items are judged structurally from session events (runtime observation, early-stop prevention, capability-ceiling escalation, multi-story evidence gate) and report `structural_evidence` or `no_structural_evidence`. One policy-level item (procedure-not-identity) is always `not_measurable`. The remaining items are keyword scans over session text and report `keyword_signal_only` or `no_keyword_signal`; a keyword match is a weak proxy, not proof of compliance, and no match means unmeasured, not violated. `transfer_alignment_summary` counts parts per status and states this method.
 
 ## build_prompt_pack
 

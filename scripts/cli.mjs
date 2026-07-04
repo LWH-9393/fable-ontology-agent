@@ -11,6 +11,8 @@ import {
   summarizeOntology,
 } from './fable-agent-core.mjs';
 
+const BOOLEAN_FLAGS = new Set(['include_edges', 'include_neighbors']);
+
 const [command = 'help', ...rawArgs] = process.argv.slice(2);
 const { flags, positionals } = parseArgs(rawArgs);
 
@@ -100,6 +102,15 @@ function parseArgs(args) {
       continue;
     }
     const next = args[i + 1];
+    if (BOOLEAN_FLAGS.has(body)) {
+      if (next === 'true' || next === 'false') {
+        flags[body] = next;
+        i++;
+      } else {
+        flags[body] = true;
+      }
+      continue;
+    }
     if (next && !next.startsWith('--')) {
       flags[body] = next;
       i++;

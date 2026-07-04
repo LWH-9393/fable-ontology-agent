@@ -84,3 +84,19 @@ assert.equal(responses[1].result.isError, true);
 assert.match(responses[1].result.content[0].text, /build_prompt_pack failed/);
 assert.equal(responses[2].result.isError, false);
 assert.ok(responses[2].result.structuredContent.atoms > 0);
+
+// cli: boolean flags must not swallow a following positional argument.
+const cliBin = path.join(PLUGIN_ROOT, 'scripts', 'cli.mjs');
+const swallowProbe = spawnSync(process.execPath, [cliBin, 'query', '--include_edges', 'validation', '--limit', '2'], { encoding: 'utf8' });
+assert.equal(swallowProbe.status, 0);
+assert.equal(JSON.parse(swallowProbe.stdout).query, 'validation');
+
+const flagFirstInspect = spawnSync(process.execPath, [cliBin, 'inspect', '--include_neighbors', busyId], { encoding: 'utf8' });
+assert.equal(flagFirstInspect.status, 0);
+const flagFirstParsed = JSON.parse(flagFirstInspect.stdout);
+assert.equal(flagFirstParsed.found, true);
+assert.ok(Array.isArray(flagFirstParsed.outgoing));
+
+const explicitFalse = spawnSync(process.execPath, [cliBin, 'inspect', busyId, '--include_neighbors', 'false'], { encoding: 'utf8' });
+assert.equal(explicitFalse.status, 0);
+assert.equal('outgoing' in JSON.parse(explicitFalse.stdout), false);
