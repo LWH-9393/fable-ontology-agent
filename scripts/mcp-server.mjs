@@ -14,8 +14,10 @@ import {
 
 const SERVER_INFO = {
   name: 'fable-ontology-agent',
-  version: '1.0.0',
+  version: '1.1.0',
 };
+
+const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
 const TOOL_DEFS = [
   {
@@ -31,7 +33,7 @@ const TOOL_DEFS = [
   {
     name: 'audit_ontology',
     title: 'Audit Ontology',
-    description: 'Return the hallucination/grounding audit that separates directly evidenced ontology data from interpretive review items.',
+    description: 'Return the hallucination/grounding audit that separates directly evidenced ontology data from interpretive review items, plus a live data_integrity check computed from the bundled atoms and edges.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -68,11 +70,11 @@ const TOOL_DEFS = [
   {
     name: 'query_ontology',
     title: 'Query Ontology',
-    description: 'Search ontology atoms by text, id, layer, type, source kind, or model.',
+    description: 'Search ontology atoms by text, id, layer, type, source kind, or model. Returns matched atoms plus total_matches and truncated so callers can refine broad queries.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Case-insensitive text query across id, text, axis, layer, type, model, and session id.' },
+        query: { type: 'string', description: 'Case-insensitive search across id, text, axis, layer, type, model, and session id. Space-separated terms are ANDed; each term must appear somewhere in the atom.' },
         layer: { type: 'string', description: 'Optional exact source_layer filter.' },
         type: { type: 'string', description: 'Optional exact atom type filter.' },
         source_kind: { type: 'string', description: 'Optional exact source_kind filter.' },
@@ -168,21 +170,28 @@ rl.on('line', async line => {
   try {
     await handleMessage(message);
   } catch (error) {
-    sendError(message.id ?? null, -32603, error.message);
+    // Notifications must never receive a response, even on internal failure.
+    if (message.id === undefined || message.id === null) {
+      process.stderr.write(`fable-ontology-agent: ${error.message}\n`);
+      return;
+    }
+    sendError(message.id, -32603, error.message);
   }
 });
 
 async function handleMessage(message) {
   const { id, method, params = {} } = message;
 
-  if (method === 'notifications/initialized') return;
+  if (typeof method === 'string' && method.startsWith('notifications/')) return;
 
   if (method === 'initialize') {
     send({
       jsonrpc: '2.0',
       id,
       result: {
-        protocolVersion: params.protocolVersion || '2025-06-18',
+        protocolVersion: SUPPORTED_PROTOCOL_VERSIONS.includes(params.protocolVersion)
+          ? params.protocolVersion
+          : SUPPORTED_PROTOCOL_VERSIONS[0],
         capabilities: {
           tools: { listChanged: false },
         },
@@ -210,16 +219,29 @@ async function handleMessage(message) {
       sendError(id, -32602, `Unknown tool: ${name}`);
       return;
     }
-    const result = await handler(args);
-    send({
-      jsonrpc: '2.0',
-      id,
-      result: {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        structuredContent: result,
-        isError: false,
-      },
-    });
+    // Tool execution failures are tool results (isError), not protocol errors,
+    // so the calling model can see the failure and adjust its arguments.
+    try {
+      const result = await handler(args);
+      send({
+        jsonrpc: '2.0',
+        id,
+        result: {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          structuredContent: result,
+          isError: false,
+        },
+      });
+    } catch (error) {
+      send({
+        jsonrpc: '2.0',
+        id,
+        result: {
+          content: [{ type: 'text', text: `Tool ${name} failed: ${error.message}` }],
+          isError: true,
+        },
+      });
+    }
     return;
   }
 

@@ -509,25 +509,61 @@ export function auditOntology() {
     fallback_summary: audit.fallback_summary,
     pattern_summary: audit.pattern_summary,
     derived_axis_summary: audit.derived_axis_summary,
+    data_integrity: checkDataIntegrity(),
     recommendation: audit.grounding_review?.interpretive_review_items
       ? 'Use direct-evidence mode for enforcement. Keep interpretive review items tagged as interpretive in prompt policies.'
       : 'Ontology is ready for direct-evidence enforcement.',
   };
 }
 
+export function checkDataIntegrity() {
+  const data = loadOntology();
+  if (data.integrity) return data.integrity;
+  const { atoms, edges, byId } = data;
+  const atomIds = new Set();
+  const edgeIds = new Set();
+  const duplicateAtomIds = [];
+  const duplicateEdgeIds = [];
+  const danglingEdgeRefs = [];
+  for (const atom of atoms) {
+    if (atomIds.has(atom.id)) duplicateAtomIds.push(atom.id);
+    atomIds.add(atom.id);
+  }
+  for (const edge of edges) {
+    if (edgeIds.has(edge.id)) duplicateEdgeIds.push(edge.id);
+    edgeIds.add(edge.id);
+    if (!byId.has(edge.from) || !byId.has(edge.to)) danglingEdgeRefs.push(edge.id);
+  }
+  data.integrity = {
+    status: duplicateAtomIds.length || duplicateEdgeIds.length || danglingEdgeRefs.length ? 'fail' : 'pass',
+    note: 'Computed live from the bundled atoms and edges at call time; independent of the static audit report.',
+    atoms: atoms.length,
+    edges: edges.length,
+    duplicate_atom_ids: duplicateAtomIds.length,
+    duplicate_edge_ids: duplicateEdgeIds.length,
+    dangling_edge_refs: danglingEdgeRefs.length,
+    samples: {
+      duplicate_atom_ids: duplicateAtomIds.slice(0, 5),
+      duplicate_edge_ids: duplicateEdgeIds.slice(0, 5),
+      dangling_edge_refs: danglingEdgeRefs.slice(0, 5),
+    },
+  };
+  return data.integrity;
+}
+
 export function getCognitiveOperationalProfile(args = {}) {
   const { query = '', axis } = args;
-  const q = normalize(query || axis || '');
+  const tokens = tokenize(query || axis || '');
   const axes = COGNITIVE_OPERATIONAL_AXES.filter(item => {
-    if (!q) return true;
-    return normalize([
+    if (!tokens.length) return true;
+    return matchesTokens(normalize([
       item.id,
       item.label,
       item.cognitive_bias,
       item.operational_expression.join(' '),
       item.soft_prompt,
       item.related_transfer_insights.join(' '),
-    ].join(' ')).includes(q);
+    ].join(' ')), tokens);
   });
   return {
     mode: 'cognitive_operational_synthesis',
@@ -539,12 +575,12 @@ export function getCognitiveOperationalProfile(args = {}) {
 
 export function listTransferInsights(args = {}) {
   const { query = '', status, map } = args;
-  const q = normalize(query);
+  const tokens = tokenize(query);
   const rows = TRANSFER_INSIGHTS.filter(item => {
     if (status && item.status !== status) return false;
     if (map && !item.maps_to.includes(map)) return false;
-    if (!q) return true;
-    return normalize([
+    if (!tokens.length) return true;
+    return matchesTokens(normalize([
       item.id,
       item.label,
       item.status,
@@ -552,7 +588,7 @@ export function listTransferInsights(args = {}) {
       item.trigger,
       item.rule,
       item.source_refs.join(' '),
-    ].join(' ')).includes(q);
+    ].join(' ')), tokens);
   });
   return {
     count: rows.length,
@@ -572,29 +608,30 @@ export function queryOntology(args = {}) {
     include_edges = false,
   } = args;
   const { atoms, outgoing, incoming } = loadOntology();
-  const q = normalize(query);
+  const haystacks = atomHaystacks();
+  const tokens = tokenize(query);
+  const max = clamp(limit, 1, 500);
   const rows = [];
-  for (const atom of atoms) {
+  let totalMatches = 0;
+  for (let i = 0; i < atoms.length; i++) {
+    const atom = atoms[i];
     if (layer && atom.source_layer !== layer) continue;
     if (type && atom.type !== type) continue;
     if (source_kind && atom.source_kind !== source_kind) continue;
     if (model && String(atom.model || '') !== model) continue;
-    const hay = normalize([
-      atom.id,
-      atom.type,
-      atom.text,
-      atom.axis,
-      atom.axes?.join(' '),
-      atom.source_kind,
-      atom.source_layer,
-      atom.model,
-      atom.session_id,
-    ].filter(Boolean).join(' '));
-    if (q && !hay.includes(q)) continue;
-    rows.push(atomPreview(atom, include_edges ? { outgoing, incoming } : null));
-    if (rows.length >= clamp(limit, 1, 500)) break;
+    if (tokens.length && !matchesTokens(haystacks[i], tokens)) continue;
+    totalMatches++;
+    if (rows.length < max) {
+      rows.push(atomPreview(atom, include_edges ? { outgoing, incoming } : null));
+    }
   }
-  return { query, count: rows.length, atoms: rows };
+  return {
+    query,
+    count: rows.length,
+    total_matches: totalMatches,
+    truncated: totalMatches > rows.length,
+    atoms: rows,
+  };
 }
 
 export function inspectNode(args = {}) {
@@ -612,6 +649,8 @@ export function inspectNode(args = {}) {
     evidence: evidenceBlock(atom),
   };
   if (include_neighbors) {
+    result.outgoing_total = out.length;
+    result.incoming_total = inc.length;
     result.outgoing = out.slice(0, neighbor_limit).map(edge => edgePreview(edge, byId));
     result.incoming = inc.slice(0, neighbor_limit).map(edge => edgePreview(edge, byId));
   }
@@ -676,11 +715,20 @@ export function scoreWorkflow(args = {}) {
   };
 }
 
+const PROMPT_PACK_FILES = [
+  'SYSTEM-PROMPT.md',
+  'SESSION-AUDIT-CHECKLIST.md',
+  'TRANSFER-INSIGHTS.md',
+  'COGNITIVE-OPERATIONAL-PROFILE.md',
+  'PROMPT-TEMPLATES.md',
+  'README.md',
+  'INTERPRETIVE-REVIEW.md',
+];
+
 export function buildPromptPack(args = {}) {
   const mode = args.mode === 'full' ? 'full' : 'strict';
   const targetDir = path.resolve(args.target_dir || path.join(GENERATED_DIR, `fable-prompt-pack-${mode}`));
   const audit = auditOntology();
-  fs.rmSync(targetDir, { recursive: true, force: true });
   fs.mkdirSync(targetDir, { recursive: true });
   const strictRules = [
     ['Output Lock', 'Before acting, lock the primary output form: answer, edit, implementation, review, audit, design artifact, research, clarification, or validation.'],
@@ -729,6 +777,10 @@ export function buildPromptPack(args = {}) {
   if (mode === 'full') {
     files['INTERPRETIVE-REVIEW.md'] = interpretiveReviewMarkdown(audit);
   }
+  // Remove only stale pack files from a previous mode; never delete anything else in target_dir.
+  for (const name of PROMPT_PACK_FILES) {
+    if (!(name in files)) fs.rmSync(path.join(targetDir, name), { force: true });
+  }
   for (const [name, body] of Object.entries(files)) {
     fs.writeFileSync(path.join(targetDir, name), body);
   }
@@ -758,6 +810,32 @@ function inc(obj, key) {
 
 function normalize(value) {
   return String(value ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function tokenize(query) {
+  return normalize(query).split(' ').filter(Boolean);
+}
+
+function matchesTokens(haystack, tokens) {
+  return tokens.every(token => haystack.includes(token));
+}
+
+function atomHaystacks() {
+  const data = loadOntology();
+  if (!data.haystacks) {
+    data.haystacks = data.atoms.map(atom => normalize([
+      atom.id,
+      atom.type,
+      atom.text,
+      atom.axis,
+      atom.axes?.join(' '),
+      atom.source_kind,
+      atom.source_layer,
+      atom.model,
+      atom.session_id,
+    ].filter(Boolean).join(' ')));
+  }
+  return data.haystacks;
 }
 
 function clamp(n, min, max) {
